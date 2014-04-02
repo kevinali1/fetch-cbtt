@@ -2,7 +2,8 @@
 Fetch-CBTT
 ==============
 A python module to fetch economic time-series from the 
-Central Bank of Trinidad &Tobago
+Central Bank of Trinidad &Tobago. Uses headless Selenium
+and phantomjs.
 
 Contributors
 ============
@@ -10,9 +11,10 @@ Contributors
 
 Installation
 =============
-``fetch-cbtt`` requires `numpy` and `Pandas` A its main 
+``fetch-cbtt`` requires `numpy` and `Pandas` as its main 
 requirements. Other requirements should not require compilation::
 
+    sudo apt-get install phantomjs # or Mac OS-X equivalent, eg brew
     pip install -r requirements.txt
     git clone https://github.com/kevinali1/fetch-cbtt.git
 

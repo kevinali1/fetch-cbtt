@@ -4,6 +4,7 @@ from datetime import date, datetime
 from slugify import slugify
 import urllib2
 import time
+import sys
 import json
 
 
@@ -116,14 +117,36 @@ def fetch_download_links(verbose=False):
     return output
 
 
-def fetch_excel_file(url):
+def fetch_excel_file(url, filename):
     """
     Given a url for an Excel file, get the file.
+    Includes progress. 
+    Credit to http://blog.radevic.com/2012/07/python-download-url-to-file-with.html
     """
     
+    assert(url[-4:] == ".xls")
+    myfile = open(filename, 'wb')
+    
     response = urllib2.urlopen(url)
-    excel_file = response.read()
-    return excel_file
+    meta = response.info()
+    file_size = int(meta.getheaders("Content-Length")[0])
+    print("Downloading: {0} Bytes: {1}".format(url, file_size))
+    file_size_dl = 0
+    block_sz = 8192
+    while True:
+        buffer = response.read(block_sz)
+        if not buffer:
+            break
+    
+        file_size_dl += len(buffer)
+        myfile.write(buffer)
+        p = float(file_size_dl) / file_size
+        status = r"{0}  [{1:.2%}]".format(file_size_dl, p)
+        status = status + chr(8)*(len(status)+1)
+        sys.stdout.write(status)    
+    
+    myfile.close()
+    
 
 
 def refresh_link_cache():

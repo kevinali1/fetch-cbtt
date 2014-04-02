@@ -1,6 +1,5 @@
 *.pyc
 *.wpr
-*.json
 *.log
 *.xls
 *~
