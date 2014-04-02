@@ -102,7 +102,7 @@ def fetch_download_links(verbose=False):
         soup = BeautifulSoup(html)
         all_links = soup.findAll('a')
         try:
-            download_link = [i for i in all_links if "xls" in i['href']]
+            download_link = [i['href'] for i in all_links if "xls" in i['href']]
         except IndexError:
             download_link = None
         
