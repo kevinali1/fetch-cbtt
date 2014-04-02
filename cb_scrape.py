@@ -30,8 +30,15 @@ def fetch_download_links(verbose=False):
     
     output = {}
     categories_dict = fetch_data_categories()
+    counter = 0
+    num_items = len(categories_dict.items())
+    
     for category, link in categories_dict.items():
         
+        # Print some progress stats
+        print "\n\n\n"
+        counter += 1
+        print "Fetching item %s of %s" % (str(counter), str(num_items))
         print "Working on %s" % (str(category))
         
         # Initialize driver
@@ -101,9 +108,20 @@ def fetch_download_links(verbose=False):
         
         output.update({category : [link, download_link]})
         
-        time.sleep(5)  # Give the api a rest
+        time.sleep(5)  # Give the api a courtesy rest
         
     return output
-        
+
+
+def fetch_excel_file(url):
+    """
+    Given a url for an Excel file, get the file.
+    """
+    
+    response = urllib2.urlopen(url)
+    excel_file = 
+    
+
+
         
         
