@@ -2,3 +2,5 @@
 *.wpr
 *.json
 *.log
+*.xls
+*~

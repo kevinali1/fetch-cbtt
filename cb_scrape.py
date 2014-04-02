@@ -1,8 +1,11 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from datetime import date, datetime
+from slugify import slugify
 import urllib2
 import time
+import json
+
 
 
 def fetch_data_categories():
@@ -33,7 +36,7 @@ def fetch_download_links(verbose=False):
     counter = 0
     num_items = len(categories_dict.items())
     
-    for category, link in categories_dict.items()[3:5]:
+    for category, link in categories_dict.items():
         
         # Print some progress stats
         print "\n\n\n"
@@ -121,6 +124,19 @@ def fetch_excel_file(url):
     response = urllib2.urlopen(url)
     excel_file = response.read()
     return excel_file
+
+
+def refresh_link_cache():
+    """
+    Fetch the excel download links and cache them.
+    This does not actuall download Excel files.
+    """
+    
+    data = fetch_download_links()
+    with open('link_cache/link-cache-' + str(slugify(unicode(datetime.now()))) + ".json", 'w') as outfile:
+        json.dump(data, outfile)    
+    
+    
     
 
 
@@ -128,10 +144,10 @@ if __name__ == "__main__":
     data = fetch_data_categories()
     for item, links in data.items():
         print "Fetching %s" % str(item)
-        filedata = fetch_excel_file(links[1])
-        excel_file = open("raw_data/" + item + ".xls", 'w')
-        excel_file.write(filedata)
-        excel_file.close
+        #filedata = fetch_excel_file(str(links[1]))
+        #excel_file = open("raw_data/" + item + ".xls", 'w')
+        #excel_file.write(filedata)
+        #excel_file.close
         
 
         
