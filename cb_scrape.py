@@ -33,7 +33,7 @@ def fetch_download_links(verbose=False):
     counter = 0
     num_items = len(categories_dict.items())
     
-    for category, link in categories_dict.items():
+    for category, link in categories_dict.items()[3:5]:
         
         # Print some progress stats
         print "\n\n\n"
@@ -102,7 +102,7 @@ def fetch_download_links(verbose=False):
         soup = BeautifulSoup(html)
         all_links = soup.findAll('a')
         try:
-            download_link = [i['href'] for i in all_links if "xls" in i['href']]
+            download_link = ["http://www.central-bank.org.tt/" + i['href'] for i in all_links if "xls" in i['href']][0]
         except IndexError:
             download_link = None
         
@@ -119,9 +119,20 @@ def fetch_excel_file(url):
     """
     
     response = urllib2.urlopen(url)
-    excel_file = 
+    excel_file = response.read()
+    return excel_file
     
 
+
+if __name__ == "__main__":
+    data = fetch_data_categories()
+    for item, links in data.items():
+        print "Fetching %s" % str(item)
+        filedata = fetch_excel_file(links[1])
+        excel_file = open("raw_data/" + item + ".xls", 'w')
+        excel_file.write(filedata)
+        excel_file.close
+        
 
         
         
