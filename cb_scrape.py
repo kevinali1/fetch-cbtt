@@ -1,8 +1,8 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from datetime import date, datetime
-from progressbar import ProgressBar
 import urllib2
+import time
 
 
 def fetch_data_categories():
@@ -22,14 +22,17 @@ def fetch_data_categories():
 
 
 
-def sync_link_data(verbose=False):
+def fetch_download_links(verbose=False):
     """
     Fetch the Excel file links corresponding to each data category
     and output as a dictionary.
     """
     
+    output = {}
     categories_dict = fetch_data_categories()
     for category, link in categories_dict.items():
+        
+        print "Working on %s" % (str(category))
         
         # Initialize driver
         print "Initializing Driver"
@@ -42,11 +45,11 @@ def sync_link_data(verbose=False):
         driver.find_element_by_id("outputXls").click()
         
         # Set dates
-        print "Select start month"
-        start_month_select = driver.find_element_by_name('startMonth')
-        for option in start_month_select.find_elements_by_tag_name('option'):
-            if option.text == 'Jan':
-                option.click()
+        #print "Select start month"
+        #start_month_select = driver.find_element_by_name('startMonth')
+        #for option in start_month_select.find_elements_by_tag_name('option'):
+            #if option.text == 'Jan':
+                #option.click()
         
         print "Select start year"
         start_year_select = driver.find_element_by_name('startYear')
@@ -54,11 +57,11 @@ def sync_link_data(verbose=False):
             if option.text == '1991':
                 option.click()
         
-        print "Select end month"
-        end_month_select = driver.find_element_by_name('endMonth')
-        for option in end_month_select.find_elements_by_tag_name('option'):
-            if option.text == 'Dec':
-                option.click()
+        #print "Select end month"
+        #end_month_select = driver.find_element_by_name('endMonth')
+        #for option in end_month_select.find_elements_by_tag_name('option'):
+            #if option.text == 'Dec':
+                #option.click()
         
         print "Select end year year"
         end_year_select = driver.find_element_by_name('endYear')
@@ -69,19 +72,38 @@ def sync_link_data(verbose=False):
         # Click all
         print "Select all fields"
         checkall = driver.find_element_by_id("checkall")
-        checkall.click()
-        
-        #driver.save_screenshot('screen.png') # For testing
+        try:
+            checkall.click()
+        except:
+            checkall.send_keys('/n')
         
         # Click submit button
         print "Click submit"
         submitbtn = driver.find_element_by_name("submitBtn")
-        submitbtn.click()
+        try:
+            submitbtn.click()
+        except:
+            submitbtn.send_keys('/n')
         
         # Switch windows
         print "Select new window"
         windows = driver.window_handles
         driver.switch_to_window(windows[-1])
         
+        # Get download link
         html = driver.page_source
+        soup = BeautifulSoup(html)
+        all_links = soup.findAll('a')
+        try:
+            download_link = [i for i in all_links if "xls" in i['href']]
+        except IndexError:
+            download_link = None
+        
+        output.update({category : [link, download_link]})
+        
+        time.sleep(5)  # Give the api a rest
+        
+    return output
+        
+        
         
